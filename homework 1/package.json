@@ -4,15 +4,22 @@
   "description": "Homework of Aleksandr Perio for NodeJS mentoring program",
   "main": "index.js",
   "scripts": {
-    "task1": "nodemon task1.js",
-    "task2": "nodemon task2.js"
+    "build": "npx babel src-es6 --out-dir dist",
+    "task1": "nodemon src/task1.js",
+    "task1:babel": "nodemon dist/task1.js",
+    "task2": "nodemon src/task2.js",
+    "task2:babel": "nodemon dist/task2.js"
   },
   "author": "Aleksandr Perio",
   "license": "ISC",
   "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
     "nodemon": "^2.0.4"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.10.4",
     "csvtojson": "^2.0.10"
   }
 }
