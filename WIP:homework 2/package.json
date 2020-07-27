@@ -1,0 +1,26 @@
+{
+  "name": "nodejs-homework-perio",
+  "version": "1.0.0",
+  "description": "Homework of Aleksandr Perio for NodeJS mentoring program",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src --out-dir dist",
+    "start": "npm run build && nodemon dist/server.js",
+    "eslint": "eslint ./src"
+  },
+  "author": "Aleksandr Perio",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.10.5",
+    "@babel/preset-env": "^7.10.4",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.5.0",
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.10.4",
+    "@hapi/joi": "^17.1.1",
+    "express": "^4.17.1"
+  }
+}
