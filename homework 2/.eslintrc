@@ -26,7 +26,7 @@
           "restParams": true,
           "spread": true,
           "superInFunctions": true,
-          "templateStrings": true,
+          "templateStrings": true
       }
   },
   "rules": {
@@ -212,7 +212,7 @@
       ],
       "indent": [
           2,
-          2,
+          4,
           {
               "SwitchCase": 1
           }
