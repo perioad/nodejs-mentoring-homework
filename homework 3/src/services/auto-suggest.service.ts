@@ -17,7 +17,7 @@ export class AutoSuggestService {
     if (suitedUsers.length === 0) {
       return null;
     } else if (suitedUsers.length > limit) {
-      const limitedSuitedUsers = suitedUsers.slice(0, limit - 1);
+      const limitedSuitedUsers = suitedUsers.slice(0, limit);
       return limitedSuitedUsers;
     } else {
       return suitedUsers;

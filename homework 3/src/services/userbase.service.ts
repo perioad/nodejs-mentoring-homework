@@ -9,32 +9,47 @@ export class UserbaseService {
   }
 
   public async getUserbase(): Promise<UserModel[]> {
-    const userbase = await this.usersRepository.getAll();
-    return userbase;
+    try {
+      const userbase: UserModel[] = await this.usersRepository.getAll();
+      return userbase;
+    } catch(error) {
+      throw error;
+    }
   }
   
-  public async getUser(userId: string): Promise<UserModel | null> {
-    const userbase = await this.getUserbase();
-    const existingUser: UserModel | undefined = userbase.find(
-      (user: UserModel) => user.id === userId,
-    );
-    return existingUser ? existingUser : null;
-  }
-
-  public async createUser(user: UserModel): Promise<string | Error> {
-    const dbResponce = await this.usersRepository.addUser(user);
-    if (typeof dbResponce === 'string') {
-      return dbResponce;
-    } else {
-      throw new Error(dbResponce.original.detail);
+  public async getUser(userId: string): Promise<UserModel> {
+    try {
+      const user: UserModel = await this.usersRepository.findUserById(userId);
+      return user;
+    } catch(error) {
+      throw error;
     }
   }
 
-  public async deleteUser(userId: string) {
-    const userbase = await this.getUserbase();
-    const existingUser: UserModel | undefined = userbase.map(
-      (user: UserModel) => user.id === existingUser.id ? { ...existingUser, isDeleted: true } : user
-      );
-    return 
+  public async createUser(user: UserModel): Promise<string> {
+    try {
+      const newUserId: string = await this.usersRepository.addUser(user);
+      return newUserId;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  public async updateUser(user: UserModel): Promise<string> {
+    try {
+      const updatedUserId: string = await this.usersRepository.updateUser(user);
+      return updatedUserId;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  public async deleteUser(userId: string): Promise<string> {
+    try {
+      const deletedUserId: string = await this.usersRepository.deleteUser(userId);
+      return deletedUserId;
+    } catch(error) {
+      throw error;
+    }
   }
 }

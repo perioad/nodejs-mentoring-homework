@@ -6,5 +6,5 @@ npm run nodemon
 Build and run server:
 ```
 npm run build
-node dist/server.js
+node dist/app.js
 ```

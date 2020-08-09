@@ -13,17 +13,25 @@ export const autosuggestRouter = (
   router.get('/', async (req: Request, res: Response) => {
     const search = String(req.query.loginSubstring);
     const limit = Number(req.query.limit);
-    const suggestedUsers: UserModel[] | null = await autoSuggestService.getSuggestion(search, limit);
-    if (suggestedUsers) {
+    try {
+      const suggestedUsers: UserModel[] | null = await autoSuggestService.getSuggestion(search, limit);
+      if (suggestedUsers) {
+        res
+            .status(200)
+            .json(suggestedUsers);
+          
+      } else {
+        res
+            .status(404)
+            .json({
+              message: 'There are no users from auto-suggest :c',
+            });
+      }
+    } catch(error) {
       res
-          .status(200)
-          .json(suggestedUsers);
-        
-    } else {
-      res
-          .status(404)
+          .status(400)
           .json({
-            message: 'There are no users from auto-suggest :c',
+              message: `Oops there is error: ${error.message} :c`,
           });
     }
   });

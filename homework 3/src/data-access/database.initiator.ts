@@ -25,7 +25,7 @@ sequelize.authenticate()
          .then(() => console.log('Successfully connected to the database :)'))
          .catch((error) => console.error(error));
 
-export class User extends Model<UserModel> implements UserModel {
+export class User extends Model implements UserModel {
   public id!: string;
   public login!: string;
   public password!: string;
