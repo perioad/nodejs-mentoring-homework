@@ -6,7 +6,7 @@ export const idConsistencyMiddleware = () => {
       res
           .status(400)
           .json({
-              message: `User id in the URI must be equal to the user id in the request's body (${req.params.id} !== ${req.body.id})`,
+              message: `Id in the URI must be equal to the id in the request's body (${req.params.id} !== ${req.body.id})`,
           });
     } else {
       next();

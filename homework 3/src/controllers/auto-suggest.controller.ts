@@ -1,11 +1,13 @@
 import { Application, Router, Request, Response } from 'express';
 import { UserModel } from '../models/User.model';
-import { AutoSuggestService } from 'src/services/auto-suggest.service';
+import { AutoSuggestService } from '../services/auto-suggest.service';
 
 export const router: Router = Router();
 
 // for example: GET /auto-suggest?limit=${number}&loginSubstring=${string}
+// for example: GET /auto-suggest?limit=3&loginSubstring=ter
 export const autosuggestRouter = (
+
   app: Application,
   autoSuggestService: AutoSuggestService) => {
   app.use('/auto-suggest', router);

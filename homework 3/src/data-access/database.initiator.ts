@@ -1,7 +1,9 @@
-import { Sequelize, Options, Model, DataTypes } from 'sequelize';
+import { Sequelize, Options, Model, DataTypes, HasManyAddAssociationMixin } from 'sequelize';
 import { UserModel } from '../models/User.model';
+import { GroupModel, Permission } from '../models/Group.model';
 import { users } from './users';
 import config from '../config';
+import { UserAndGroupModel } from '../models/UserAndGroup.model';
 
 const DATABASE_CONFIG: Options = {
   host: config.host,
@@ -19,11 +21,11 @@ const DATABASE_CONFIG: Options = {
   logging: false,
 };
 
-const sequelize: Sequelize = new Sequelize(DATABASE_CONFIG);
+export const sequelize: Sequelize = new Sequelize(DATABASE_CONFIG);
 
 sequelize.authenticate()
          .then(() => console.log('Successfully connected to the database :)'))
-         .catch((error) => console.error(error));
+         .catch((error) => console.error(`Unable to connect to the database: ${error}`));
 
 export class User extends Model implements UserModel {
   public id!: string;
@@ -31,6 +33,8 @@ export class User extends Model implements UserModel {
   public password!: string;
   public age!: number;
   public isDeleted!: boolean;
+
+  public addGroup!: HasManyAddAssociationMixin<Group, string>;
 }
 
 User.init(
@@ -62,20 +66,94 @@ User.init(
   }
 );
 
-User.sync({ force: true })
-  .then(() => {
-    (function populateUsersTable(users) {
-      users.forEach((user: UserModel) => {
-        User.create({
-          id: user.id,
-          login: user.login,
-          password: user.password,
-          age: user.age,
-          isDeleted: user.isDeleted,
-        })
-        .then((user: UserModel) => console.log(`${user.login} was successfully added to the database :)`))
-        .catch((error: Error) => console.error(error.message));
-      })
-    })(users);
-  })
-  .catch((error: Error) => console.error(error.message));
+export class Group extends Model implements GroupModel {
+  public id!: string;
+  public name!: string;
+  public permissions!: Array<Permission>;
+
+  public addUser!: HasManyAddAssociationMixin<User, string>;
+}
+
+Group.init(
+  {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    permissions: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+    },
+  },
+  {
+    tableName: 'groups',
+    sequelize,
+  }
+);
+
+export class UserAndGroup extends Model implements UserAndGroupModel {
+  public userId!: string;
+  public groupId!: string;
+}
+
+UserAndGroup.init(
+  {
+    UserId: {
+      type: DataTypes.STRING,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: User,
+        key: 'id',
+      }
+    },
+    GroupId: {
+      type: DataTypes.STRING,
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+      references: {
+        model: Group,
+        key: 'id',
+      }
+    },
+  },
+  {
+    tableName: 'usersgroups',
+    sequelize,
+  }
+);
+
+const userModelSync = User.sync({ force: true })
+                          .then(() => {
+                            console.log('Users table synced :)');
+                            (function populateUsersTable(users) {
+                              users.forEach((user: UserModel) => {
+                                User.create({
+                                  id: user.id,
+                                  login: user.login,
+                                  password: user.password,
+                                  age: user.age,
+                                  isDeleted: user.isDeleted,
+                                })
+                                .then((user: UserModel) => console.log(`${user.login} was successfully added to the users database :)`))
+                                .catch((error: Error) => console.error(error.message));
+                              })
+                            })(users);
+                          });
+
+const groupModelSync = Group.sync()
+                            .then(() => console.log('Groups table synced :)'));
+
+Promise.all([userModelSync, groupModelSync]).then(() => {
+  UserAndGroup.sync({ force: true })
+            .then(() => {
+              console.log('UsersGroup table synced :)');
+              User.belongsToMany(Group, { through: UserAndGroup });
+              Group.belongsToMany(User, { through: UserAndGroup });
+            })
+            .catch((error: Error) => console.error(error.message));
+});

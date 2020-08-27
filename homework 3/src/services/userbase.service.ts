@@ -1,5 +1,5 @@
-import { UserModel } from "src/models/User.model";
-import { UsersRepository } from "src/data-access/users.repository";
+import { UserModel } from "../models/User.model";
+import { UsersRepository } from "../data-access/users.repository";
 
 export class UserbaseService {
   private usersRepository: UsersRepository;

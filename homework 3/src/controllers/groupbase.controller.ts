@@ -1,27 +1,27 @@
 import { Application, Router, Request, Response } from 'express';
 import { validateSchemaMiddleware } from './middlewares/validation.middleware';
 import { idConsistencyMiddleware } from './middlewares/id-consistency.middleware';
-import { UserbaseService } from '../services/userbase.service';
-import { UserModel } from '../models/User.model';
-import { joiSchemaUser } from './middlewares/joi schemas/user-schema';
+import { GroupbaseService } from '../services/groupbase.service';
+import { GroupModel } from '../models/Group.model';
+import { joiSchemaGroup } from './middlewares/joi schemas/group-schema';
 
 const router: Router = Router();
 
-export const userbaseRouter = (
+export const groupbaseRouter = (
     app: Application,
-    userbaseService: UserbaseService
+    groupbaseService: GroupbaseService
   ) => {
     
-  app.use('/userbase', router);
+  app.use('/groupbase', router);
 
   router.get('/', async (req: Request, res: Response) => {
     try {
-      const users: UserModel[] = await userbaseService.getUserbase();
+      const groups: GroupModel[] = await groupbaseService.getGroupbase();
       res
           .status(200)
           .json({
-              message: 'Welcome to the awesome userbase :)',
-              userbase: users,
+              message: 'Welcome to the awesome groupbase :)',
+              groupbase: groups,
           });
     } catch(error) {
       res
@@ -35,10 +35,10 @@ export const userbaseRouter = (
   router.route('/:id')
       .get(async (req: Request, res: Response) => {
         try {
-          const user: UserModel = await userbaseService.getUser(req.params.id);
+          const group: GroupModel = await groupbaseService.getGroup(req.params.id);
           res
               .status(200)
-              .json(user);
+              .json(group);
         } catch(error) {
           res
               .status(400)
@@ -47,14 +47,14 @@ export const userbaseRouter = (
               });
         }
       })
-      .post(validateSchemaMiddleware(joiSchemaUser), idConsistencyMiddleware(), async (req: Request, res: Response) => {
-          const newUser: UserModel = req.body;
+      .post(validateSchemaMiddleware(joiSchemaGroup), idConsistencyMiddleware(), async (req: Request, res: Response) => {
+          const newGroup: GroupModel = req.body;
           try {
-            const addedUserId: string = await userbaseService.createUser(newUser);
+            const addedGroupId: string = await groupbaseService.createGroup(newGroup);
             res
                 .status(201)
                 .json({
-                    message: `New user with id ${addedUserId} has been added to the userbase :)`,
+                    message: `New group with id ${addedGroupId} has been added to the groupbase :)`,
                 });
           } catch(error) {
             res
@@ -64,14 +64,14 @@ export const userbaseRouter = (
                 });
           }
       })
-      .put(validateSchemaMiddleware(joiSchemaUser), idConsistencyMiddleware(), async (req: Request, res: Response) => {
-        const userToUpdate: UserModel = req.body;
+      .put(validateSchemaMiddleware(joiSchemaGroup), idConsistencyMiddleware(), async (req: Request, res: Response) => {
+        const groupToUpdate: GroupModel = req.body;
         try {
-          const updatedUserId: string = await userbaseService.updateUser(userToUpdate);
+          const updatedGroupId: string = await groupbaseService.updateGroup(groupToUpdate);
           res
               .status(200)
               .json({
-                  message: `User with id ${updatedUserId} was succesfully edited :)`
+                  message: `Group with id ${updatedGroupId} was succesfully edited :)`
               });
         } catch(error) {
           res
@@ -83,11 +83,11 @@ export const userbaseRouter = (
       })
       .delete(async (req: Request, res: Response) => {
         try {
-          const deletedUserId: string = await userbaseService.deleteUser(req.params.id);
+          const deletedGroupId: string = await groupbaseService.deleteGroup(req.params.id);
           res
               .status(200)
               .json({
-                  message: `User with id ${deletedUserId} was succesfully deleted :)`
+                  message: `Group with id ${deletedGroupId} was succesfully deleted :)`
               });
         } catch(error) {
           res
