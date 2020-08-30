@@ -1,6 +1,7 @@
 import { WhereOptions } from "sequelize/types";
 import { Group } from "./database.initiator";
 import { GroupModel } from "../models/Group.model";
+import { NotFoundError } from "../errors/not-found.error";
 
 export class GroupsRepository {
   private groupsTable: typeof Group;
@@ -65,7 +66,7 @@ export class GroupsRepository {
       if (group !== null) {
         return group;
       } else {
-        throw new Error(`group with id ${id} wasn't found`);
+        throw new NotFoundError(`group with id ${id} wasn't found :c`);
       }
     } catch(error) {
       throw error;

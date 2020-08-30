@@ -2,7 +2,6 @@ import { UsersRepository } from "./users.repository";
 import { GroupsRepository } from "./groups.repository";
 import { sequelize, UserAndGroup } from "./database.initiator";
 
-
 export class UsersAndGroupsRepository {
   private usersAndGroupsTable: typeof UserAndGroup;
 
