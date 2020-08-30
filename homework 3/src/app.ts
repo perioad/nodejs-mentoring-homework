@@ -12,12 +12,17 @@ import { groupbaseRouter } from './controllers/groupbase.controller';
 import { usersAndGroupsRouter } from './controllers/users-and-groups.controller';
 import { UsersAndGroupsService } from './services/users-and-groups.service';
 import { UsersAndGroupsRepository } from './data-access/users-and-groups.repository';
+import { requestInfoMiddleware } from './controllers/middlewares/request-info.middleware';
+import { unhandledErrorsMiddleware } from './controllers/middlewares/unhandled-errors.middleware';
+import { errorsHandlerMiddleware } from './controllers/middlewares/errors-handler.middleware';
+import { errorLogger } from './loggers/error.logger';
 
 const app: Application = express();
 
 app.listen(3000);
 
 app.use(express.json());
+app.use(requestInfoMiddleware);
 
 const usersRepository = new UsersRepository(User);
 const userbaseService = new UserbaseService(usersRepository);
@@ -36,3 +41,15 @@ autosuggestRouter(app, autoSuggestService);
 groupbaseRouter(app, groupbaseService);
 
 usersAndGroupsRouter(app, usersToGroupService);
+
+app.use(errorsHandlerMiddleware);
+
+app.use(unhandledErrorsMiddleware);
+
+process
+.on('unhandledRejection', (error: Error) => {
+  errorLogger.error(error);
+})
+.on('uncaughtException', (error: Error) => {
+  errorLogger.error(error);
+});

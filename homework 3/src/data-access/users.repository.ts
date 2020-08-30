@@ -1,6 +1,8 @@
 import { User } from "./database.initiator";
 import { UserModel } from "../models/User.model";
 import { WhereOptions } from "sequelize/types";
+import { AlreadyDeletedError } from "../errors/already-deleted.error";
+import { NotFoundError } from "../errors/not-found.error";
 
 export class UsersRepository {
   private usersTable: typeof User;
@@ -51,7 +53,7 @@ export class UsersRepository {
     try {
       const userToDelete: User = await this.findUserById(userId);
       if (userToDelete && userToDelete.isDeleted) {
-        throw new Error(`user with id ${userId} has already been deleted`);
+        throw new AlreadyDeletedError(`user with id ${userId} has already been deleted :c`);
       }
       userToDelete.isDeleted = true;
       await userToDelete.save();
@@ -71,7 +73,7 @@ export class UsersRepository {
       if (user !== null) {
         return user;
       } else {
-        throw new Error(`user with id ${id} wasn't found`);
+        throw new NotFoundError(`user with id ${id} wasn't found :c`);
       }
     } catch(error) {
       throw error;
