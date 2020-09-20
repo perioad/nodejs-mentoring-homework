@@ -79,5 +79,23 @@ export class UsersRepository {
       throw error;
     }
   }
+
+  public async findUserByLoginAndPassword(login: string, password: string): Promise<User> {
+    try {
+      const user: User | null = await this.usersTable.findOne({
+        where: {
+          login,
+          password,
+        } as WhereOptions,
+      });
+      if (user !== null) {
+        return user;
+      } else {
+        throw new NotFoundError(`user with login ${login} and password ${password} wasn't found :c`);
+      }
+    } catch(error) {
+      throw error;
+    }
+  }
   
 }

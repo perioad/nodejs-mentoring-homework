@@ -25,6 +25,18 @@ export const userbaseRouter = (
         });
   }));
 
+  router.get('/login', validateSchemaMiddleware(joiSchemaUser), wrapAsync(async (req: Request, res: Response) => {
+    const login: string = req.body.login;
+    const password: string = req.body.password;
+    const token: string = await userbaseService.authenticate(login, password);
+    res
+        .status(200)
+        .json({
+            message: 'Here is your JWT token :)',
+            token,
+        });
+  }));
+
   router.route('/:id')
       .get(wrapAsync(async (req: Request, res: Response) => {
         const user: UserModel = await userbaseService.getUser(req.params.id);

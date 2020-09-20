@@ -1,5 +1,7 @@
+import jwt from 'jsonwebtoken';
 import { UserModel } from "../models/User.model";
 import { UsersRepository } from "../data-access/users.repository";
+import config from "../config";
 
 export class UserbaseService {
   private usersRepository: UsersRepository;
@@ -48,6 +50,19 @@ export class UserbaseService {
     try {
       const deletedUserId: string = await this.usersRepository.deleteUser(userId);
       return deletedUserId;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  public async authenticate(login: string, password: string): Promise<string> {
+    try {
+      await this.usersRepository.findUserByLoginAndPassword(login, password);
+      const payload = {
+        login,
+      };
+      const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '1h' });
+      return token;
     } catch(error) {
       throw error;
     }
