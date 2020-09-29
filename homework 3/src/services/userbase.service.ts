@@ -57,11 +57,12 @@ export class UserbaseService {
 
   public async authenticate(login: string, password: string): Promise<string> {
     try {
-      await this.usersRepository.findUserByLoginAndPassword(login, password);
+      await this.usersRepository.authenticate(login, password);
       const payload = {
         login,
       };
-      const token = jwt.sign(payload, config.jwtSecret, { expiresIn: '1h' });
+      const jwtSecret = config.jwtSecret as string;
+      const token = jwt.sign(payload, jwtSecret, { expiresIn: '1h' });
       return token;
     } catch(error) {
       throw error;

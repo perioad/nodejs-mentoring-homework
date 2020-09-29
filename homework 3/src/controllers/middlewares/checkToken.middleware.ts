@@ -11,9 +11,10 @@ export const checkTokenMiddleware = (req: Request, res: Response, next: NextFunc
   }
 
   const token = req.headers['x-access-token'] as string;
+  const jwtSecret = config.jwtSecret as string;
 
   if (token) {
-    jwt.verify(token, config.jwtSecret, (error) => {
+    jwt.verify(token, jwtSecret, (error) => {
       if (error) {
         const forbiddenError = new ForbiddenError('The token is not valid :c');
         next(forbiddenError);

@@ -80,18 +80,19 @@ export class UsersRepository {
     }
   }
 
-  public async findUserByLoginAndPassword(login: string, password: string): Promise<User> {
+  public async authenticate(login: string, password: string): Promise<User> {
     try {
       const user: User | null = await this.usersTable.findOne({
         where: {
           login,
-          password,
         } as WhereOptions,
       });
-      if (user !== null) {
-        return user;
+      if (user === null) {
+        throw new NotFoundError(`user with login ${login} wasn't found :c`);
+      } else if (user.password !== password) {
+        throw new NotFoundError(`we found user with login ${login} but didn't found such password ${password} connected to this user :c`);
       } else {
-        throw new NotFoundError(`user with login ${login} and password ${password} wasn't found :c`);
+        return user;
       }
     } catch(error) {
       throw error;
