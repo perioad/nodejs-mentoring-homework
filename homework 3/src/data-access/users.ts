@@ -1,4 +1,6 @@
-export const users = [
+import { UserModel } from "../models/User.model";
+
+export const users: UserModel[] = [
   {
     id: '1',
     login: 'terminator',
